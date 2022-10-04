@@ -1,0 +1,2 @@
+matrix2latex(OrthPvalues, 'Orth.tex', 'alignment', 'c', 'format', '%-6.2f')
+matrix2latex(OrthPvaluesF, 'OrthF.tex', 'alignment', 'c', 'format', '%-6.2f')
