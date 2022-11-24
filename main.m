@@ -2,18 +2,20 @@
 clear all
 close all
 clc
+
+addpath(genpath('functions'))
 %% Download original GK2015 data
 [xlsdata, xlstext] = xlsread('GK2015_Data.xlsx','Sheet1');
-dates = xlstext(3:end,1);
-datesnum = Date2Num(dates,'m');
+dates = xlstext(3:end, 1);
+datesnum = Date2Num(dates, 'm');
 % Variable names
-vnames_long = xlstext(1,2:end);
-vnames = xlstext(2,2:end);
+vnames_long = xlstext(1, 2:end);
+vnames = xlstext(2, 2:end);
 nvar = length(vnames);
 % Remove 123456789 to NaN
 data   = Num2NaN(xlsdata);
 for ii=1:length(vnames)
-    DATA.(vnames{ii}) = data(:,ii);
+    DATA.(vnames{ii}) = data(:, ii);
 end
 
 %% Download FRED-MD
@@ -26,7 +28,7 @@ vnamesMd = md.textdata(1, 2:end);
 tcodes = md.data(1, :);
 
 % Download the data
-mdData = md.data(2:end,:);
+mdData = md.data(2:end, :);
 
 % Convert dates to the same format
 mdDates = cell(size(mdData, 1), 1);
@@ -53,9 +55,9 @@ mdEndInd = find(strcmp(mdDates, mdEnd));
 TT = mdEndInd - mdStartInd + 1; % Effecitve size of FRED-MD
 NN = size(mdData, 2);
 T = size(data,1); % Size of the original GK2015 dataset (for replication)
-nFac = 11;
-nrep = 500;
-computeBT = true;
+nFac = 11; % factors
+nrep = 500; 
+computeBT = true; % bootstrap
 removeTrend = true;
 dataFrequency = 'M';
 %% Transform and save the data
@@ -305,11 +307,7 @@ FEVD_comp = FEVD_comp(ind, :);
 %% Compare specifications
 % IRFSingle3 = IRFSingle;
 IRFSingle4 = IRFSingle;
-% IRFSingle5 = IRFSingle;
-% IRFSingle6 = IRFSingle;
-% IRFSingle7 = IRFSingle;
-% IRFSingle8 = IRFSingle;
-% IRFSingle9 = IRFSingle;
+
 
 IRFSingle4Up = squeeze(IRFsBTf.IRFupper(1, :, :))';
 IRFSingle4Up = (ReScale*IRFSingle4Up')';
@@ -338,7 +336,7 @@ TitlenamesF = {'1yr rate';'CPI';'IP';'EBP'; 'Comm paper spread';...
     '5yr rate'; '10yr rate'};
 Titlenames = {'1yr rate';'CPI';'IP';'EBP'};
 %% Plot the IRFs
-FigSize(20,20)
+
 idx = 1;
 for ii=1:size(IRFs_single, 2)
     subplot(4,2,idx)
@@ -371,9 +369,9 @@ end
 legend('FAVAR with GK2015 + 4PC')
 print('GK_FAV4_Comp','-dpdf','-r0');
 
-FigSize(20,20)
+
 idx = 1;
-for ii=2:size(IRFSingle3, 2)
+for ii=2:size(IRFSingle4, 2)
     subplot(3,2,idx) 
     plot(IRFSingle4(:,ii),'-k','LineWidth',2); hold on; 
     plot(IRFSingle4Up(:,ii),'--k','LineWidth',1); hold on; 
@@ -383,32 +381,4 @@ for ii=2:size(IRFSingle3, 2)
     axis tight
     idx = idx + 1;
 end   
-hold off
-
-FigSize(20,20)
-c = {'b', 'r', 'g', 'c', 'm', 'k', 'y'; '3-PC', '4-PC', '5-PC',...
-    '6-PC', '7-PC', '8-PC', '9-PC'};
-idx = 1;
-for ii=2:size(IRFSingle3, 2)
-    subplot(3,2,idx)
-    plot(IRFSingle3(:,ii),'--r','LineWidth',1, 'Color', c{1, 1},...
-        'DisplayName', c{2, 1}); hold on; 
-    plot(IRFSingle4(:,ii),'--r','LineWidth',1, 'Color', c{1, 2},...
-        'DisplayName', c{2, 2}); hold on; 
-    plot(IRFSingle5(:,ii),'--r','LineWidth',1, 'Color', c{1, 3},...
-        'DisplayName', c{2, 3}); hold on;
-    plot(IRFSingle6(:,ii),'--r','LineWidth',1, 'Color', c{1, 4},...
-        'DisplayName', c{2, 4}); hold on;
-    plot(IRFSingle7(:,ii),'--r','LineWidth',1, 'Color', c{1, 5},...
-        'DisplayName', c{2, 5}); hold on;
-    plot(IRFSingle8(:,ii),'--r','LineWidth',1, 'Color', c{1, 6},...
-        'DisplayName', c{2, 6}); hold on;
-    plot(IRFSingle9(:,ii),'--r','LineWidth',1, 'Color', c{1, 7},...
-        'DisplayName', c{2, 7}); hold on; 
-    plot(zeros(h),'-k')
-    title(TitlenamesF{ii},'FontWeight','bold')
-    axis tight
-    idx = idx + 1;
-end
-legend('FontSize', 9, 'Location', 'Southwest')  
 hold off
