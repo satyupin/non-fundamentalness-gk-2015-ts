@@ -4,6 +4,7 @@ close all
 clc
 
 addpath(genpath('functions'))
+addpath(genpath('data'))
 %% Download original GK2015 data
 [xlsdata, xlstext] = xlsread('GK2015_Data.xlsx','Sheet1');
 dates = xlstext(3:end, 1);
